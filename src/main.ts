@@ -1,8 +1,10 @@
+import {Router} from "@vaadin/router";
+
 export {}
+
 const app = $('.app')
 
 const renderMenu = () => {
-
     $('<div>')
         .addClass('navigation__title')
         .appendTo(app)
@@ -11,7 +13,6 @@ const renderMenu = () => {
     const navigation = $('<div>')
         .addClass('navigation')
         .appendTo(app)
-
     const room = $('<div>')
         .addClass('navigation__box')
         .appendTo(navigation)
@@ -25,7 +26,6 @@ const renderMenu = () => {
         .addClass('navigation__input')
         .appendTo(room)
         .attr('placeholder', 'Set room Name')
-
     const user = $('<div>')
         .addClass('navigation__box')
         .appendTo(navigation)
@@ -39,22 +39,17 @@ const renderMenu = () => {
         .addClass('navigation__input')
         .appendTo(user)
         .attr('placeholder', 'Set user Name')
-
     const buttonBox = $('<div>')
         .appendTo(navigation)
         .addClass('navigation__button-box')
-
-    const entryButton = $('<button>')
+    const entryButton = $('.entry-button')
         .appendTo(buttonBox)
-        .text('Entry')
-        .addClass('entry-button')
 
-
-
-    entryButton.click(() => {
+    entryButton.click((event) => {
         if (userInput.val() !== '' && roomInput.val() !== '') {
-            navigation.children().remove()
+            navigation.remove()
             renderRoom()
+            window.location.pathname = `room=${roomInput.val()}`
         }
         if (userInput.val() === ''){
             userInput.removeClass('navigation__input')
@@ -69,42 +64,61 @@ const renderMenu = () => {
     return navigation
 }
 
-renderMenu()
-
 const renderRoom = () => {
-    const navigation = $('.navigation')
+    $('.entry-button').remove()
+
+    $('<div>')
+        .addClass('navigation__title')
+        .appendTo(app)
+        .text('Chat app')
+
+    const navigation = $('<div>')
+        .addClass('room-messages')
+        .appendTo(app)
     const messagesBox = $('<div>')
         .addClass('navigation__text')
         .appendTo(navigation)
     const newMessagesBox = $('<div>')
         .addClass('create-Message')
         .appendTo(navigation)
-    const addPictureIcon = $('<button>')
-        .addClass('create-Message__photo')
+    const addPictureIcon = $('.fa-camera')
         .appendTo(newMessagesBox)
-
+        .addClass('create-Message__photo')
     const message = $('<input>')
         .appendTo(newMessagesBox)
         .css('border-radius', '10px')
         .addClass('create-Message__input')
-
-    const addButton = $('<button>')
-        .addClass('create-Message__send')
+        .attr('placeholder', 'message...')
+    const addButton = $('.fa-paper-plane')
         .appendTo(newMessagesBox)
-        .text('send')
+        .addClass('create-Message__photo')
 
     addButton.click(() => {
         const text: string = message.val()
         if (text !== '') {
-            const newMessage = $('<div>').appendTo(messagesBox)
+            const newMessage = $('<div>')
+                .appendTo(messagesBox)
                 .addClass('create-Message__messages')
+
             $('<div>').appendTo(newMessage)
                 .addClass('create-Message__messages--user')
                 .text(text)
-            $('<div>').appendTo(newMessage).addClass('navigation__text--user')
+            $('<div>').appendTo(newMessage).addClass('create-Message__messages--time')
                 .text('12:45')
 
             message.val('')
         }
     })
 }
+
+const renderNavigation = () => {
+    if (window.location.href === 'http://localhost:3000/'){
+        renderMenu()
+    }
+    if (window.location.href !== 'http://localhost:3000/'){
+        renderRoom()
+        console.log(location)
+    }
+}
+
+renderNavigation()
