@@ -1,8 +1,7 @@
-import {Router} from "@vaadin/router";
-
 export {}
 
 const app = $('.app')
+let url: Array<string> = []
 
 const renderMenu = () => {
     $('<div>')
@@ -45,16 +44,22 @@ const renderMenu = () => {
     const entryButton = $('.entry-button')
         .appendTo(buttonBox)
 
-    entryButton.click((event) => {
+    entryButton.click(() => {
         if (userInput.val() !== '' && roomInput.val() !== '') {
             navigation.remove()
             renderRoom()
-            window.location.pathname = `room=${roomInput.val()}`
+            // window.location.pathname = `room=${roomInput.val()}`
+            window.history.pushState({}, '', `/room/${roomInput.val()}/user/${userInput.val()}`)
+            console.log(window.location.pathname)
+            const url1 = window.location.pathname
+            url = url.concat(url1)
         }
-        if (userInput.val() === ''){
+
+        if (userInput.val() === '') {
             userInput.removeClass('navigation__input')
                 .addClass('navigation__input--error')
         }
+
         if (roomInput.val() === '') {
             roomInput.removeClass('navigation__input')
                 .addClass('navigation__input--error')
@@ -66,11 +71,6 @@ const renderMenu = () => {
 
 const renderRoom = () => {
     $('.entry-button').remove()
-
-    $('<div>')
-        .addClass('navigation__title')
-        .appendTo(app)
-        .text('Chat app')
 
     const navigation = $('<div>')
         .addClass('room-messages')
@@ -111,14 +111,23 @@ const renderRoom = () => {
     })
 }
 
+renderMenu()
+
 const renderNavigation = () => {
-    if (window.location.href === 'http://localhost:3000/'){
-        renderMenu()
-    }
-    if (window.location.href !== 'http://localhost:3000/'){
-        renderRoom()
-        console.log(location)
-    }
+    url.forEach(address => {
+        if (address !== '/') {
+
+            window.location.assign('http://localhost:3000/')
+            window.history.pushState({}, '', address)
+        }
+        console.log(address)
+
+        // if (url === '/'){
+        //     window.history.pushState({}, '', url)
+        //     console.log('location')
+        // }
+    })
+
 }
 
 renderNavigation()
